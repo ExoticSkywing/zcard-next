@@ -33,9 +33,15 @@
 
 ## 3. 新增第 N 个自研产品的标准 4 步 SOP（以 `<product>` 为例）
 
-### 第 1 步：自研服务侧暴露 `/api/inhouse/*` 纯 JSON 接口
-- 必须校验内网请求头（如 `x-inhouse-key`）的合法性；
-- 所有异常响应建议统一返回 HTTP 状态码 + JSON `{ "code": 400, "message": "中文可读错误提示" }`。
+### 第 1 步：自研服务侧暴露标准双切面接口
+- **板块二（后台管控切面 `/api/inhouse/*`）**：
+  - 必须校验内网请求头（如 `x-inhouse-key`）的合法性；
+  - 所有异常响应建议统一返回 HTTP 状态码 + JSON `{ "code": 400, "message": "中文可读错误提示" }`。
+- **板块一（标准供货切面 `/api/supply/*`，遵循 `zcard-supply-v2`）**：
+  - **4 头 HMAC-SHA256 验签**：校验 `X-Supply-Key`、`X-Supply-Timestamp`（±300s）、`X-Supply-Nonce`、`X-Supply-Signature`，新口径签名串为 `METHOD\nPATH\nTIMESTAMP\nNONCE\nMD5(rawBody)\nMD5(rawQuery)`（兼容无 `MD5(rawQuery)` 的 5 段旧口径）；
+  - **必备端点**：`GET /api/supply/ping`、`POST /api/supply/categories`、`GET /api/supply/products`、`GET /api/supply/products/:id(/stock)`、`POST /api/supply/orders`、`GET /api/supply/orders(/:id)`；
+  - **下单幂等铁律**：自研服务需持久化 `downstream_order_no` 主键的供货订单表，对相同下游订单号的重试请求 100% 返回相同卡密，严禁重复创建客户或扣重账；
+  - **本机回环联调配置**：当 ZCard 通过 `127.0.0.1` 对接本机上的自研供货服务时，必须在 `/etc/systemd/system/zcard.service` 的 `[Service]` 段配置 `Environment=ZCARD_HTTPX_ALLOW_PRIVATE=1` 以放行回环访问（默认 SSRF 防护会拦截私有 IP）。
 
 ### 第 2 步：在 ZCard 后端新增适配器 `server/internal/mods/inhouse/<product>.go`
 参照 1 号样板 [ccmtv.go](file:///www/wwwroot/xingxy.manyuzo.com/wp-content/plugins/services/zcard-next/server/internal/mods/inhouse/ccmtv.go)：
