@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/NovaWorks/zcard-next/server/internal/mods/authz"
+	"github.com/NovaWorks/zcard-next/server/internal/mods/supply/adapter"
 	"github.com/go-kratos/kratos/v3/errors"
 )
 
@@ -68,5 +69,39 @@ func TestCallCCMTVTranslatesUpstream401To503(t *testing.T) {
 	m, ok := res.(map[string]any)
 	if !ok || m["enabled"] != true {
 		t.Fatalf("unexpected response payload: %#v", res)
+	}
+}
+
+func TestCCMTVSupplyAdapterHandshake(t *testing.T) {
+	if os.Getenv("ZCARD_CCMTV_SUPPLY_TEST") != "1" {
+		t.Skip("set ZCARD_CCMTV_SUPPLY_TEST=1 and ZCARD_HTTPX_ALLOW_PRIVATE=1 to verify live ccmtv supply endpoint")
+	}
+	key := resolveCCMTVKey()
+	if key == "" {
+		t.Fatal("resolveCCMTVKey() returned empty")
+	}
+	a, err := adapter.New("zcard", resolveCCMTVBaseURL(), adapter.Credentials{
+		APIKey:    "ccmtv",
+		APISecret: key,
+	}, []int{0})
+	if err != nil {
+		t.Fatalf("adapter.New failed: %v", err)
+	}
+	ctx := context.Background()
+	ping, err := a.Ping(ctx)
+	if err != nil || ping.ProtocolVersion != "zcard-supply-v2" || ping.Currency != "CNY" {
+		t.Fatalf("Ping failed: %+v, err=%v", ping, err)
+	}
+	cats, err := a.ListCategories(ctx)
+	if err != nil || len(cats) == 0 || cats[0].ID != "ccmtv" {
+		t.Fatalf("ListCategories failed: %+v, err=%v", cats, err)
+	}
+	list, err := a.ListProducts(ctx, 1, 50, true)
+	if err != nil || list.Total != 2 || len(list.Items) != 2 {
+		t.Fatalf("ListProducts failed: %+v, err=%v", list, err)
+	}
+	stock, err := a.GetStock(ctx, "ccmtv-loon", "")
+	if err != nil || stock <= 0 {
+		t.Fatalf("GetStock failed: stock=%d, err=%v", stock, err)
 	}
 }
