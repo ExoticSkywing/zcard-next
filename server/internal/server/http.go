@@ -29,6 +29,7 @@ import (
 	"github.com/NovaWorks/zcard-next/server/internal/mods/fulfillment"
 	"github.com/NovaWorks/zcard-next/server/internal/mods/identity"
 	identityport "github.com/NovaWorks/zcard-next/server/internal/mods/identity/port"
+	"github.com/NovaWorks/zcard-next/server/internal/mods/inhouse"
 	"github.com/NovaWorks/zcard-next/server/internal/mods/inventory"
 	"github.com/NovaWorks/zcard-next/server/internal/mods/license"
 	"github.com/NovaWorks/zcard-next/server/internal/mods/lottery"
@@ -276,6 +277,9 @@ func NewHTTPServer(
 
 	// 在线更新管理面（；system:update 超管专属）
 	adminv1.RegisterAdminUpdateServiceHTTPServer(srv, updateSvc)
+
+	// 自研产品（In-house Products）后台统一网关（仅此处单行挂载，零侵入上游）
+	inhouse.Register(srv)
 
 	// 保留路径（规划 ：/api /uploads /health /payments /install 为保留前缀）
 	registerHealth(srv, d, enq)

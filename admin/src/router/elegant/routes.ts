@@ -97,6 +97,17 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'inhouse',
+    path: '/inhouse',
+    component: 'layout.base$view.inhouse',
+    meta: {
+      title: '自研产品',
+      i18nKey: 'route.inhouse',
+      icon: 'mdi:cube-outline',
+      order: 10.5
+    }
+  },
+  {
     name: 'inventory',
     path: '/inventory',
     component: 'layout.base$view.inventory',

@@ -240,6 +240,7 @@ var domainLabels = map[string]string{
 	"dashboard":   "工作台",
 	"notify":      "通知",
 	"audit":       "审计",
+	"inhouse":     "自研产品",
 	"system":      "系统",
 }
 

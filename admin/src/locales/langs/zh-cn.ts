@@ -234,6 +234,7 @@ const local: App.I18n.Schema = {
     order: "订单管理",
     "payment-channel": "支付渠道",
     channel: "渠道管理",
+    inhouse: "自研产品",
     staff: "员工管理",
     settings: "系统设置",
     user: "用户管理",

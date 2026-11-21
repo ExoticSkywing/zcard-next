@@ -24,6 +24,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   channel: () => import("@/views/channel/index.vue"),
   content: () => import("@/views/content/index.vue"),
   home: () => import("@/views/home/index.vue"),
+  inhouse: () => import("@/views/inhouse/index.vue"),
   inventory: () => import("@/views/inventory/index.vue"),
   marketing: () => import("@/views/marketing/index.vue"),
   order: () => import("@/views/order/index.vue"),

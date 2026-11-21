@@ -21,6 +21,7 @@ export const ROUTE_PERMISSIONS: Record<string, string[]> = {
   staff: ["identity:admin_read"],
   settings: ["settings:read"],
   channel: ["supply:read", "supplier:read", "procurement:read"],
+  inhouse: ["inhouse:read"],
 };
 
 /**

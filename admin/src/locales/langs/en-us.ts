@@ -241,6 +241,7 @@ const local: App.I18n.Schema = {
     order: "Orders",
     "payment-channel": "Payment Channels",
     channel: "Channels",
+    inhouse: "In-house Products",
     staff: "Staff",
     settings: "Settings",
     user: "Users",

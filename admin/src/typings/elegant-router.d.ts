@@ -25,6 +25,7 @@ declare module "@elegant-router/types" {
     "content": "/content";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
+    "inhouse": "/inhouse";
     "inventory": "/inventory";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
     "marketing": "/marketing";
@@ -75,6 +76,7 @@ declare module "@elegant-router/types" {
     | "content"
     | "home"
     | "iframe-page"
+    | "inhouse"
     | "inventory"
     | "login"
     | "marketing"
@@ -111,6 +113,7 @@ declare module "@elegant-router/types" {
     | "channel"
     | "content"
     | "home"
+    | "inhouse"
     | "inventory"
     | "marketing"
     | "order"
